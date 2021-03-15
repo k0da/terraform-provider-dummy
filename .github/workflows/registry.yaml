@@ -1,0 +1,17 @@
+name: Publish registry
+
+on:
+  push:
+
+jobs:
+  tf_registry:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: k0da/tf-registry-action@test
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts_dir: dist
+        repository: k0da.github.io
+        namespace: foo
+
