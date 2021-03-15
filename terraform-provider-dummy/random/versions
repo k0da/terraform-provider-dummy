@@ -1,0 +1,12 @@
+---
+---
+{
+  "versions": [
+{% for provider in site.data.providers %}
+    {
+      "version": "{{ provider.version }}",
+      "platforms": {{ provider.platforms | jsonify }} 
+{% endfor %}
+    }	
+   ]
+}
