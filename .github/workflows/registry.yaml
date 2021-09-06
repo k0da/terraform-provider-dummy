@@ -8,6 +8,11 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
+    - name: create pubring.gpg
+      run: |
+        mkdir -p ~/.gnupg
+        touch ~/.gnupg/pubring.gpg
+
     - name: Import GPG key
       id: import_gpg
       uses: hashicorp/ghaction-import-gpg@v2.1.0
@@ -15,6 +20,10 @@ jobs:
         # These secrets will need to be configured for the repository:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         PASSPHRASE: ${{ secrets.PASSPHRASE }}
+    - run: |
+        ls -la ~/.gnupg
+        env
+
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v2.7.0
       with:
@@ -24,11 +33,11 @@ jobs:
         GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
         # GitHub sets this automatically
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - uses: k0da/tf-registry-action@test
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts_dir: dist
-        repository: k0da.github.io
-        namespace: foo
-        gpg_fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}
+          #    - uses: k0da/tf-registry-action@test
+          #      with:
+          #        token: ${{ secrets.GITHUB_TOKEN }}
+          #        artifacts_dir: dist
+          #        repository: k0da.github.io
+          #        namespace: foo
+          #        gpg_fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}
 
