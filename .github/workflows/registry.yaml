@@ -1,7 +1,7 @@
 name: Publish registry
 
 on:
-  push:
+  release:
 
 jobs:
   tf_registry:
@@ -20,10 +20,6 @@ jobs:
         # These secrets will need to be configured for the repository:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         PASSPHRASE: ${{ secrets.PASSPHRASE }}
-    - run: |
-        ls -la ~/.gnupg
-        env
-
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v2.7.0
       with:
@@ -33,11 +29,10 @@ jobs:
         GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
         # GitHub sets this automatically
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #    - uses: k0da/tf-registry-action@test
-          #      with:
-          #        token: ${{ secrets.GITHUB_TOKEN }}
-          #        artifacts_dir: dist
-          #        repository: k0da.github.io
-          #        namespace: foo
-          #        gpg_fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}
-
+    - uses: docker://absaoss/tfreg-golang@v0.0.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts_dir: dist
+        repository: k0da.github.io
+        namespace: foo
+        gpg_fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}
